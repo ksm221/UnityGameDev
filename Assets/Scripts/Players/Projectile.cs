@@ -26,13 +26,18 @@ public class Projectile : MonoBehaviour
     }
     private void OnTriggerEnter2D(Collider2D collision)
     {
+        // Check if the collided object is either a Wall, an Enemy, or a Rock
         if (collision.gameObject.layer == LayerMask.NameToLayer("Wall") ||
-            collision.gameObject.layer == LayerMask.NameToLayer("Enemy"))
+            collision.gameObject.layer == LayerMask.NameToLayer("Enemy") ||
+            collision.gameObject.layer == LayerMask.NameToLayer("Rocks"))
         {
+            Debug.Log("Hit Object: " + collision.gameObject.name + ", Layer: " + LayerMask.LayerToName(collision.gameObject.layer));
             hit = true;
             boxCollider.enabled = false;
             anim.SetTrigger("explode");
+            gameObject.SetActive(false);  // Ensure the projectile is deactivated in all cases
 
+            // Handle additional logic for enemies
             if (collision.gameObject.layer == LayerMask.NameToLayer("Enemy"))
             {
                 Health enemyHealth = collision.GetComponent<Health>();
@@ -43,6 +48,7 @@ public class Projectile : MonoBehaviour
             }
         }
     }
+
 
     public void SetDirection(float _direction)
     {

@@ -39,7 +39,7 @@ public class SmallerRock : MonoBehaviour
         {
             Destroy(gameObject);
         }
-        else if (collision.gameObject.CompareTag("Enemy"))
+        else if (collision.gameObject.CompareTag("Boss"))
         {
             Destroy(gameObject);
         }

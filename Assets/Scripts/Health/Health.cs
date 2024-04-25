@@ -24,6 +24,9 @@ public class Health : MonoBehaviour
     [SerializeField] private AudioClip deathSound;
     [SerializeField] private AudioClip hurtSound;
 
+    [Header("WallLeft")]
+    public GameObject wallLeftGameObject;
+
     private void Awake()
     {
         currentHealth = startingHealth;
@@ -34,7 +37,7 @@ public class Health : MonoBehaviour
 
     public void TakeDamage(float _damage)
     {
-        if (invulnerable || dead) return;
+        if (invulnerable || dead) return; // Prevent taking damage if invulnerable or already dead
 
         currentHealth = Mathf.Clamp(currentHealth - _damage, 0, startingHealth);
         Debug.Log($"Current Health: {currentHealth}");
@@ -85,12 +88,17 @@ public class Health : MonoBehaviour
             component.enabled = false;
         }
 
+        if (gameObject.CompareTag("Boss") && wallLeftGameObject != null)
+        {
+            wallLeftGameObject.SetActive(false);
+        }
+
         StartCoroutine(PostDeathActions());
     }
 
     private IEnumerator PostDeathActions()
     {
-        yield return new WaitForSeconds(1);
+        yield return new WaitForSeconds(1); // Allow death animations to play
 
         if (gameObject.tag == "Player" && playerRespawn != null)
         {
@@ -98,7 +106,7 @@ public class Health : MonoBehaviour
         }
         else
         {
-            gameObject.SetActive(false);
+            gameObject.SetActive(false); // Disable the enemy GameObject
         }
     }
 
@@ -106,8 +114,9 @@ public class Health : MonoBehaviour
     {
         currentHealth = startingHealth;
         dead = false;
-        gameObject.SetActive(true);
+        gameObject.SetActive(true); // Reactivate the player gameObject
 
+        // Re-enable components to allow actions
         foreach (Behaviour component in components)
         {
             component.enabled = true;
@@ -115,6 +124,6 @@ public class Health : MonoBehaviour
 
         anim.SetBool("grounded", true);
         anim.Play("Idle");
-        StartCoroutine(Invulnerability());
+        StartCoroutine(Invulnerability()); // Make the player invulnerable for a short period after respawning
     }
 }

@@ -13,9 +13,9 @@ GameObject:
   - component: {fileID: 8126196091926051034}
   - component: {fileID: 3054951202654773170}
   - component: {fileID: 1731419277379713754}
-  m_Layer: 9
+  m_Layer: 10
   m_Name: Firetrap
-  m_TagString: Enemy
+  m_TagString: Trap
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

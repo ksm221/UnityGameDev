@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using UnityEngine;
 
@@ -17,7 +18,7 @@ public class PlayerMovement : MonoBehaviour
 
     [Header("Wall Jumping")]
     [SerializeField] private float wallJumpX;
-    [SerializeField] private float wallJumpY; 
+    [SerializeField] private float wallJumpY;
 
     [Header("Layers")]
     [SerializeField] private LayerMask groundLayer;
@@ -31,6 +32,7 @@ public class PlayerMovement : MonoBehaviour
     private BoxCollider2D boxCollider;
     private float wallJumpCooldown;
     private float horizontalInput;
+    private bool inputDisabled;
 
     private void Awake()
     {
@@ -41,19 +43,25 @@ public class PlayerMovement : MonoBehaviour
 
     private void Update()
     {
+        if (inputDisabled) return;
+
         horizontalInput = Input.GetAxis("Horizontal");
 
+        //Flip player when moving left-right
         if (horizontalInput > 0.01f)
             transform.localScale = Vector3.one;
         else if (horizontalInput < -0.01f)
             transform.localScale = new Vector3(-1, 1, 1);
 
+        //Set animator parameters
         anim.SetBool("run", horizontalInput != 0);
         anim.SetBool("grounded", isGrounded());
 
+        //Jump
         if (Input.GetKeyDown(KeyCode.Space))
             Jump();
 
+        //Adjustable jump height
         if (Input.GetKeyUp(KeyCode.Space) && body.velocity.y > 0)
             body.velocity = new Vector2(body.velocity.x, body.velocity.y / 2);
 
@@ -73,13 +81,13 @@ public class PlayerMovement : MonoBehaviour
                 jumpCounter = extraJumps;
             }
             else
-                airJumpCounter -= Time.deltaTime; 
+                airJumpCounter -= Time.deltaTime;
         }
     }
 
     private void Jump()
     {
-        if (airJumpCounter <= 0 && !onWall() && jumpCounter <= 0) return;
+        if (inputDisabled || airJumpCounter <= 0 && !onWall() && jumpCounter <= 0) return;
 
         SoundManager.instance.PlaySound(jumpSound);
 
@@ -88,23 +96,63 @@ public class PlayerMovement : MonoBehaviour
         else
         {
             if (isGrounded())
+            {
                 body.velocity = new Vector2(body.velocity.x, jumpPower);
+                jumpCounter = extraJumps; // Reset the extra jumps when grounded
+            }
             else
             {
                 if (airJumpCounter > 0)
+                {
                     body.velocity = new Vector2(body.velocity.x, jumpPower);
+                }
                 else
                 {
-                    if (jumpCounter > 0) 
+                    if (jumpCounter > 0)
                     {
                         body.velocity = new Vector2(body.velocity.x, jumpPower);
                         jumpCounter--;
                     }
                 }
             }
-
-            airJumpCounter = 0;
+            airJumpCounter = 0; // Reset coyote time
         }
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if ((collision.gameObject.CompareTag("Boss") || collision.gameObject.CompareTag("Enemy")) && !inputDisabled)
+        {
+            // Calculate knockback direction and distance
+            Vector2 knockbackDirection = (transform.position - collision.transform.position).normalized;
+            knockbackDirection.y = 0; // Knockback is horizontal only
+            float knockbackDistance = 2f;
+
+            // Apply knockback by directly modifying the position
+            transform.position = new Vector3(transform.position.x + knockbackDirection.x * knockbackDistance, transform.position.y + 1, transform.position.z);
+
+            // Disable player input
+            StartCoroutine(DisableInputForDuration(1f));
+
+            // Deal damage if the player is hit
+            if (gameObject.CompareTag("Player"))
+            {
+                Health playerHealth = GetComponent<Health>();
+                if (playerHealth != null)
+                {
+                    playerHealth.TakeDamage(1f);
+                }
+            }
+
+            Debug.Log("Player knocked back.");
+        }
+    }
+
+    private IEnumerator DisableInputForDuration(float duration)
+    {
+        inputDisabled = true;
+        yield return new WaitForSeconds(duration);
+        inputDisabled = false;
     }
 
     private IEnumerator SmoothWallJump()
@@ -129,7 +177,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void WallJump()
     {
-        StartCoroutine(SmoothWallJump()); 
+        StartCoroutine(SmoothWallJump());
         wallJumpCooldown = 0;
     }
 
@@ -146,6 +194,6 @@ public class PlayerMovement : MonoBehaviour
     }
     public bool canAttack()
     {
-        return horizontalInput == 0 && isGrounded() && !onWall();
+        return !onWall();
     }
 }

@@ -13,9 +13,9 @@ GameObject:
   - component: {fileID: 1741360219637832434}
   - component: {fileID: 4953096696093672268}
   - component: {fileID: 1791009468366486972}
-  m_Layer: 9
+  m_Layer: 10
   m_Name: Saw
-  m_TagString: Untagged
+  m_TagString: Trap
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

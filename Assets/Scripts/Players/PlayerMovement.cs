@@ -132,7 +132,7 @@ public class PlayerMovement : MonoBehaviour
             transform.position = new Vector3(transform.position.x + knockbackDirection.x * knockbackDistance, transform.position.y + 1, transform.position.z);
 
             // Disable player input
-            StartCoroutine(DisableInputForDuration(1f));
+            StartCoroutine(DisableInputForDuration(0.75f));
 
             // Deal damage if the player is hit
             if (gameObject.CompareTag("Player"))

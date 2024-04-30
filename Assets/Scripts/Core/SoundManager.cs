@@ -17,8 +17,19 @@ public class SoundManager : MonoBehaviour
             DontDestroyOnLoad(gameObject);
         }
         else if (instance != null && instance != this)
-            Destroy(gameObject);
-
+        {
+            // Check if the current instance is a CreditsSoundManager
+            if (gameObject.name != "CreditsSoundManager")
+            {
+                Destroy(gameObject);
+            }
+            else
+            {
+                // If it's CreditsSoundManager, update the instance and do not destroy
+                instance = this;
+                DontDestroyOnLoad(gameObject);
+            }
+        }
 
         ChangeMusicVolume(0);
         ChangeSoundVolume(0);

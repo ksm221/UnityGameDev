@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
 public class SelectionArrow : MonoBehaviour
 {
@@ -40,6 +41,11 @@ public class SelectionArrow : MonoBehaviour
             currentPositon = 0;
 
         rect.position = new Vector3(rect.position.x, options[currentPositon].position.y, 0);
+
+        EventSystem.current.SetSelectedGameObject(null);
+
+        // Set the new selected object
+        EventSystem.current.SetSelectedGameObject(options[currentPositon].gameObject);
     }
     private void Interact()
     {

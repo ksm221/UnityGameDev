@@ -8,7 +8,7 @@ public class KeyboardTeleporter : MonoBehaviour
 
     [SerializeField] private Camera startingRoomCamera; // Assign in Unity Inspector
     [SerializeField] private Camera mainCamera; // Assign in Unity Inspector
-    [SerializeField] private Cinemachine.CinemachineVirtualCamera virtualCamera; // Assign in Unity Inspector
+    //[SerializeField] private Cinemachine.CinemachineVirtualCamera virtualCamera; // Assign in Unity Inspector
     [SerializeField] private GameObject teleportDestinationObject;
 
     private Rigidbody2D playerRigidbody;
@@ -30,10 +30,10 @@ public class KeyboardTeleporter : MonoBehaviour
         {
             Debug.LogError("MainCamera is not assigned in the inspector!");
         }
-        if (virtualCamera == null)
-        {
-            Debug.LogError("VirtualCamera is not assigned in the inspector!");
-        }
+        //if (virtualCamera == null)
+        //{
+        //    Debug.LogError("VirtualCamera is not assigned in the inspector!");
+        //}
     }
 
     private void Update()
@@ -63,7 +63,7 @@ public class KeyboardTeleporter : MonoBehaviour
             if (mainCamera != null)
             {
                 mainCamera.gameObject.SetActive(true);
-                virtualCamera.gameObject.SetActive(true);
+                //virtualCamera.gameObject.SetActive(true);
             }
         }
     }

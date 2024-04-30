@@ -29,6 +29,7 @@ public class Projectile : MonoBehaviour
         // Check if the collided object is either a Wall, an Enemy, or a Rock
         if (collision.gameObject.layer == LayerMask.NameToLayer("Wall") ||
             collision.gameObject.layer == LayerMask.NameToLayer("Enemy") ||
+            collision.gameObject.layer == LayerMask.NameToLayer("Triggers") ||
             collision.gameObject.layer == LayerMask.NameToLayer("Rocks"))
         {
             Debug.Log("Hit Object: " + collision.gameObject.name + ", Layer: " + LayerMask.LayerToName(collision.gameObject.layer));

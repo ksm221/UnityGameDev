@@ -74,7 +74,7 @@ public class Health : MonoBehaviour
         invulnerable = false;
     }
 
-    private void Die()
+    public void Die()
     {
         Debug.Log("Player Died");
         dead = true;
@@ -106,7 +106,7 @@ public class Health : MonoBehaviour
         }
         else
         {
-            gameObject.SetActive(false); // Disable the enemy GameObject
+            gameObject.SetActive(false);
         }
     }
 

@@ -11,6 +11,8 @@ public class SpikeHead : EnemyDamage
     [SerializeField] private float checkDelay;
     [SerializeField] private float returnDelay = 3f;
     [SerializeField] private LayerMask playerLayer;
+    [SerializeField] private float attackTimeout = 1f; // Time in seconds after which the attack stops if no collision occurs.
+    private float timeSinceAttackStarted;
     private float checkTimer;
     private Vector3 destination;
     private bool attacking;
@@ -36,7 +38,16 @@ public class SpikeHead : EnemyDamage
         if (attacking)
         {
             transform.Translate(destination * Time.deltaTime * speed);
-            lastAttackTime = Time.time;
+            timeSinceAttackStarted += Time.deltaTime;
+
+            // Check if the attack has timed out
+            if (timeSinceAttackStarted >= attackTimeout)
+            {
+                Debug.Log("Attack timed out. Returning to original position.");
+                timeSinceAttackStarted = 0; // Reset the attack timer
+                lastAttackTime = Time.time; // Update last attack time to start return delay
+                Stop();
+            }
         }
         else
         {
@@ -44,19 +55,25 @@ public class SpikeHead : EnemyDamage
             if (checkTimer > checkDelay)
                 CheckForPlayer();
 
-            if (Time.time - lastAttackTime > returnDelay)
+            // Return to original position logic
+            if (!attacking && Time.time - lastAttackTime > returnDelay)
             {
-
-                Vector3 returnDirection = originalPosition - transform.position;
-                if (returnDirection.magnitude > 0.1f)
-                {
-                    transform.position += returnDirection.normalized * returnSpeed * Time.deltaTime;
-                }
-                else
-                {
-                    transform.position = originalPosition;
-                }
+                ReturnToOriginalPosition();
             }
+        }
+    }
+
+    private void ReturnToOriginalPosition()
+    {
+        Vector3 returnDirection = originalPosition - transform.position;
+        if (returnDirection.magnitude > 0.1f)
+        {
+            transform.position += returnDirection.normalized * returnSpeed * Time.deltaTime;
+        }
+        else
+        {
+            transform.position = originalPosition;
+            attacking = false; // Ensure attacking is false when in original position
         }
     }
     private void CheckForPlayer()
@@ -65,14 +82,17 @@ public class SpikeHead : EnemyDamage
 
         for (int i = 0; i < directions.Length; i++)
         {
-            Debug.DrawRay(transform.position, directions[i], Color.red);
             RaycastHit2D hit = Physics2D.Raycast(transform.position, directions[i], range, playerLayer);
+            Debug.DrawRay(transform.position, directions[i], Color.red);
 
             if (hit.collider != null && !attacking)
             {
                 attacking = true;
                 destination = directions[i];
                 checkTimer = 0;
+                lastAttackTime = Time.time; // Set last attack time when starting an attack
+                timeSinceAttackStarted = 0; // Reset attack timer
+                break; // Break after deciding to attack in one direction
             }
         }
     }
@@ -88,6 +108,8 @@ public class SpikeHead : EnemyDamage
     {
         destination = Vector3.zero;
         attacking = false;
+        timeSinceAttackStarted = 0; // Reset the attack timer when stopping
+        lastAttackTime = Time.time; // Update last attack time to start return delay
     }
 
     private void OnTriggerEnter2D(Collider2D collision)

@@ -5,7 +5,7 @@ public class CamTrig : MonoBehaviour
     public GameObject mainCameraGameObject; // Assign the Main Camera GameObject
     public GameObject bossCameraGameObject; // Assign the Boss Camera GameObject
 
-    private float exitCooldown = 1.0f; // Cooldown in seconds before allowing an exit switch
+    private float exitCooldown = 0.5f; // Cooldown in seconds before allowing an exit switch
     private float lastEnterTime;
     private bool enteredBossRoom = false;
 

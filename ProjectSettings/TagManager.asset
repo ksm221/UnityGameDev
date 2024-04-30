@@ -12,6 +12,8 @@ TagManager:
   - Projectiles
   - Triggers
   - Boss
+  - Deathbarrier
+  - Switch
   layers:
   - Default
   - TransparentFX
@@ -28,7 +30,7 @@ TagManager:
   - Projectiles
   - SmallerRock
   - Triggers
-  - 
+  - Switch
   - 
   - 
   - 

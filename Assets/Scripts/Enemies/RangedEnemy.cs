@@ -56,7 +56,6 @@ public class RangedEnemy : MonoBehaviour
         cooldownTimer = 0;
         fireballs[FindFireball()].transform.position = firepoint.position;
         fireballs[FindFireball()].GetComponent<EnemyProjectile>().ActivateProjectile();
-        Debug.Log($"Rock position: {firepoint.position}");
     }
     private int FindFireball()
     {
